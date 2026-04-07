@@ -99,7 +99,7 @@ export default function CollectionPagesPage() {
                 </div>
                 <div className="mt-4 flex gap-2">
                   <a
-                    href={`/submit/${page.slug}`}
+                    href={`/submit/${page.slug.trim()}`}
                     target="_blank"
                     className="flex-1 px-3 py-2 bg-blue-600 text-white text-center rounded hover:bg-blue-700 transition text-sm"
                   >
@@ -187,7 +187,7 @@ function CreateModal({ onClose, onSuccess, supabase }: { onClose: () => void; on
             <input
               type="text"
               value={slug}
-              onChange={(e) => setSlug(e.target.value)}
+              onChange={(e) => setSlug(e.target.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
               className="mt-1 w-full border border-gray-300 rounded-md px-3 py-2"
               placeholder="e.g., customer-testimonials"
               required
