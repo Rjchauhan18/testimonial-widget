@@ -25,7 +25,8 @@ export default function LoginPage() {
 
       if (error) throw error;
 
-      router.push('/dashboard');
+      // Force full page reload to sync session cookies for middleware
+      window.location.href = '/dashboard';
     } catch (err: any) {
       setError(err.message || 'Failed to login');
     } finally {
