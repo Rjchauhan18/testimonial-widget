@@ -32,20 +32,24 @@ export async function GET(request: Request) {
           const container = document.getElementById('testimonial-widget');
           if (!container) return;
           
-          container.innerHTML = testimonials.map(t => \`
-            <div class="testimonial-card" style="background: white; border-radius: 8px; padding: 24px; margin: 16px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-              ${t.rating ? \`<div style="color: #fbbf24; font-size: 20px; margin-bottom: 12px;">${'★'.repeat(t.rating)}${'☆'.repeat(5 - t.rating)}</div>\` : ''}
-              ${t.testimonial_text ? \`<p style="color: #374151; font-style: italic; margin-bottom: 16px;">"${t.testimonial_text}"</p>\` : ''}
-              ${t.video_url ? \`<video src="${t.video_url}" controls style="width: 100%; max-height: 256px; border-radius: 8px; margin-bottom: 16px;"></video>\` : ''}
-              <div style="display: flex; align-items: center; gap: 12px;">
-                ${t.image_url ? \`<img src="${t.image_url}" alt="${t.name}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">\` : \`<div style="width: 48px; height: 48px; border-radius: 50%; background: #dbeafe; display: flex; align-items: center; justify-content: center; color: #2563eb; font-weight: bold;">${t.name.charAt(0).toUpperCase()}</div>\`}
-                <div>
-                  <p style="font-weight: 600; color: #111827; margin: 0;">${t.name}</p>
-                  ${t.role ? \`<p style="font-size: 14px; color: #6b7280; margin: 0;">${t.role}${t.company ? ' at ' + t.company : ''}</p>\` : ''}
-                </div>
-              </div>
-            </div>
-          \`).join('');
+          container.innerHTML = testimonials.map(t => {
+            const stars = t.rating ? '<div style="color: #fbbf24; font-size: 20px; margin-bottom: 12px;">' + '★'.repeat(t.rating) + '☆'.repeat(5 - t.rating) + '</div>' : '';
+            const text = t.testimonial_text ? '<p style="color: #374151; font-style: italic; margin-bottom: 16px;">"' + t.testimonial_text + '"</p>' : '';
+            const video = t.video_url ? '<video src="' + t.video_url + '" controls style="width: 100%; max-height: 256px; border-radius: 8px; margin-bottom: 16px;"></video>' : '';
+            const avatar = t.image_url ? '<img src="' + t.image_url + '" alt="' + t.name + '" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">' : '<div style="width: 48px; height: 48px; border-radius: 50%; background: #dbeafe; display: flex; align-items: center; justify-content: center; color: #2563eb; font-weight: bold;">' + t.name.charAt(0).toUpperCase() + '</div>';
+            const roleText = t.role ? '<p style="font-size: 14px; color: #6b7280; margin: 0;">' + t.role + (t.company ? ' at ' + t.company : '') + '</p>' : '';
+            
+            return '<div class="testimonial-card" style="background: white; border-radius: 8px; padding: 24px; margin: 16px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">' +
+              stars + text + video +
+              '<div style="display: flex; align-items: center; gap: 12px;">' +
+                avatar +
+                '<div>' +
+                  '<p style="font-weight: 600; color: #111827; margin: 0;">' + t.name + '</p>' +
+                  roleText +
+                '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('');
         }
         
         if (document.readyState === 'loading') {

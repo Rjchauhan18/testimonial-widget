@@ -1,13 +1,5 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { v2 as cloudinary } from 'cloudinary';
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
 
 export async function POST(request: Request) {
   try {
@@ -32,24 +24,37 @@ export async function POST(request: Request) {
     // Upload video to Cloudinary if provided
     let videoUrl: string | null = null;
     if (videoFile && videoFile.size > 0) {
-      const bytes = await videoFile.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+      const apiKey = process.env.CLOUDINARY_API_KEY;
+      const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-      const uploadResult = await new Promise<any>((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: 'testimonial-widget/submissions',
-            resource_type: 'video',
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        uploadStream.end(buffer);
-      });
+      if (!cloudName || !apiKey || !apiSecret) {
+        return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
+      }
 
-      videoUrl = uploadResult.secure_url;
+      // Create form data for Cloudinary upload
+      const cloudinaryFormData = new FormData();
+      cloudinaryFormData.append('file', videoFile);
+      cloudinaryFormData.append('upload_preset', 'testimonial-widget');
+      cloudinaryFormData.append('folder', 'testimonials');
+      cloudinaryFormData.append('api_key', apiKey);
+      cloudinaryFormData.append('timestamp', Math.floor(Date.now() / 1000).toString());
+
+      // Upload to Cloudinary
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`,
+        {
+          method: 'POST',
+          body: cloudinaryFormData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Video upload failed');
+      }
+
+      const data = await response.json();
+      videoUrl = data.secure_url;
     }
 
     // Create Supabase client
