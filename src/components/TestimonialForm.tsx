@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { uploadToCloudinary } from '@/lib/cloudinary';
 
 interface TestimonialFormProps {
   collectionPageSlug?: string;
@@ -31,8 +30,20 @@ export default function TestimonialForm({ collectionPageSlug, onSuccess }: Testi
 
       // Upload video if provided
       if (videoFile) {
-        const uploadResult = await uploadToCloudinary(videoFile, 'submissions');
-        videoUrl = (uploadResult as any).secure_url;
+        const uploadFormData = new FormData();
+        uploadFormData.append('video', videoFile);
+        
+        const uploadResponse = await fetch('/api/upload-video', {
+          method: 'POST',
+          body: uploadFormData,
+        });
+        
+        if (!uploadResponse.ok) {
+          throw new Error('Video upload failed');
+        }
+        
+        const uploadResult = await uploadResponse.json();
+        videoUrl = uploadResult.url;
       }
 
       // Submit testimonial
