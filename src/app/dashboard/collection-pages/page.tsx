@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase';
 
 interface CollectionPage {
   id: string;
@@ -18,7 +18,6 @@ export default function CollectionPagesPage() {
   const [pages, setPages] = useState<CollectionPage[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const supabase = createClient();
 
   useEffect(() => {
     loadPages();
@@ -125,6 +124,7 @@ export default function CollectionPagesPage() {
               setShowCreateModal(false);
               loadPages();
             }}
+            supabase={supabase}
           />
         )}
       </div>
@@ -132,13 +132,12 @@ export default function CollectionPagesPage() {
   );
 }
 
-function CreateModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) {
+function CreateModal({ onClose, onSuccess, supabase }: { onClose: () => void; onSuccess: () => void; supabase: any }) {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [description, setDescription] = useState('');
   const [brandColor, setBrandColor] = useState('#3B82F6');
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

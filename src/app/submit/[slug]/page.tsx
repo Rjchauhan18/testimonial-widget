@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase';
 
 export default function SubmitTestimonialPage() {
   const params = useParams();
@@ -21,8 +21,6 @@ export default function SubmitTestimonialPage() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
-
-  const supabase = createClient();
 
   useEffect(() => {
     loadPage();
