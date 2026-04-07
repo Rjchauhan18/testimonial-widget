@@ -134,9 +134,26 @@ export default function SubmitTestimonialPage() {
   if (!page) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Page Not Found</h1>
-          <p className="text-gray-600 mt-2">This testimonial collection page doesn't exist.</p>
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="text-6xl mb-4">😕</div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Page Not Found</h1>
+          <p className="text-gray-600 mb-4">
+            This testimonial collection page doesn&apos;t exist or hasn&apos;t been created yet.
+          </p>
+          <div className="bg-gray-50 rounded-lg p-4 text-left">
+            <p className="text-sm font-medium text-gray-700 mb-2">Looking for your collection page?</p>
+            <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+              <li>Go to your Dashboard</li>
+              <li>Click &quot;Collection Pages&quot;</li>
+              <li>Create a new page or copy the correct URL</li>
+            </ol>
+          </div>
+          <a
+            href="/dashboard/collection-pages"
+            className="inline-block mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
+            Go to Dashboard
+          </a>
         </div>
       </div>
     );
