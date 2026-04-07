@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import TestimonialWidget from '@/components/TestimonialWidget';
+import DashboardLayout from '@/components/DashboardLayout';
 
 interface User {
   id: string;
@@ -92,21 +93,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600">Dashboard</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-gray-600">{user?.email}</span>
-            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium capitalize">
-              {user?.plan}
-            </span>
-          </div>
+    <DashboardLayout>
+      <div className="max-w-7xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Welcome back! Here&apos;s what&apos;s happening with your testimonials.</p>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Stats */}
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatCard
@@ -223,8 +217,8 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
 
