@@ -180,7 +180,12 @@ export default function SettingsPage() {
           <button
             onClick={async () => {
               if (!confirm('Are you sure? This will permanently delete your account and all data.')) return;
-              if (!confirm('This action cannot be undone. Type DELETE to confirm.') === 'DELETE') return;
+              
+              const confirmation = prompt('This action cannot be undone. Type DELETE to confirm:');
+              if (confirmation !== 'DELETE') {
+                alert('Confirmation failed. Account not deleted.');
+                return;
+              }
               
               const { error } = await supabase.rpc('delete_user_account');
               if (error) {
