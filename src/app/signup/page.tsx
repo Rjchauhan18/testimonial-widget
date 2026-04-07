@@ -21,13 +21,16 @@ export default function SignupPage() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${typeof window !== 'undefined' ? window.location.origin : 'https://testimonialcollection.vercel.app'}/auth/callback`,
+        },
       });
 
       if (error) throw error;
 
       // Redirect to dashboard (user will need to verify email)
       router.push('/dashboard');
-      alert('Account created! Please check your email to verify.');
+      alert('Account created! Please check your email to verify your account.');
     } catch (err: any) {
       setError(err.message || 'Failed to create account');
     } finally {
