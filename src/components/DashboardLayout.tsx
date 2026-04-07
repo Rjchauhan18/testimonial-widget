@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import DarkModeToggle from '@/components/DarkModeToggle';
@@ -12,7 +12,9 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [userEmail, setUserEmail] = useState<string>('');
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     async function getUser() {
@@ -24,6 +26,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     getUser();
   }, []);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+  };
+
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: '📊' },
     { name: 'Collection Pages', href: '/dashboard/collection-pages', icon: '📄' },
@@ -31,6 +38,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Widgets', href: '/dashboard/widgets', icon: '🎨' },
     { name: 'Settings', href: '/dashboard/settings', icon: '⚙️' },
   ];
+
+  // Get user initials for avatar
+  const getInitials = (email: string) => {
+    return email
+      .split('@')[0]
+      .split(/[._]/)
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
@@ -46,21 +64,54 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             
             <div className="flex items-center gap-4">
               <DarkModeToggle />
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {userEmail}
-              </span>
-              <Link
-                href="/dashboard"
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-              >
-                Dashboard
-              </Link>
-              <button
-                onClick={() => supabase.auth.signOut()}
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
-              >
-                Logout
-              </button>
+              
+              {/* Profile Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                  className="flex items-center gap-2 focus:outline-none"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                    {getInitials(userEmail)}
+                  </div>
+                </button>
+
+                {showProfileMenu && (
+                  <>
+                    {/* Backdrop */}
+                    <div 
+                      className="fixed inset-0 z-10" 
+                      onClick={() => setShowProfileMenu(false)}
+                    />
+                    
+                    {/* Dropdown Menu */}
+                    <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
+                      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                        <p className="text-sm text-gray-900 dark:text-white font-medium truncate">
+                          {userEmail}
+                        </p>
+                      </div>
+                      
+                      <div className="py-2">
+                        <Link
+                          href="/dashboard/settings"
+                          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          onClick={() => setShowProfileMenu(false)}
+                        >
+                          Settings
+                        </Link>
+                        
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
