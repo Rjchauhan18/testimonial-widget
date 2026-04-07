@@ -27,15 +27,24 @@ export default function SubmitTestimonialPage() {
   }, [slug]);
 
   async function loadPage() {
+    console.log('Loading page with slug:', slug);
+    
     const { data, error } = await supabase
       .from('collection_pages')
       .select('*')
       .eq('slug', slug)
       .single();
 
-    if (error || !data) {
+    console.log('Query result:', { data, error });
+
+    if (error) {
+      console.error('Error loading page:', error);
+      setPage(null);
+    } else if (!data) {
+      console.log('No page found for slug:', slug);
       setPage(null);
     } else {
+      console.log('Page loaded successfully:', data);
       setPage(data);
     }
     setLoading(false);
