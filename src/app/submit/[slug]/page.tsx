@@ -84,7 +84,7 @@ export default function SubmitTestimonialPage() {
       const { data: { user } } = await supabase.auth.getUser();
       
       // For public submissions, we'll use the page owner's ID
-      const { data: { user: pageOwner } } = await supabase
+      const { data: pageOwner } = await supabase
         .from('users')
         .select('id')
         .eq('id', page.user_id)
